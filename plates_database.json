@@ -1,0 +1,26 @@
+{
+    "UP6AWHERO4388": {
+        "owner": "Aaryan Bari", 
+        "vehicle": "Motorcycle", 
+        "notes": "Primary vehicle",
+        "reference_image": "hr26dk8337_ref.jpg"
+    },
+    "KL58J9999": {
+        "owner": "John Doe", 
+        "vehicle": "Car", 
+        "notes": "Test vehicle 1",
+        "reference_image": "kl58j9999_ref.jpg"
+    },
+    "MH20EE7598": {
+        "owner": "Jane Smith", 
+        "vehicle": "Scooter", 
+        "notes": "Test vehicle 2",
+        "reference_image": "mh20ee7598_ref.jpg"
+    },
+    "BR334980IND6": {
+        "owner": "Test User", 
+        "vehicle": "Test Car", 
+        "notes": "From second test run",
+        "reference_image": "br334980ind6_ref.jpg"
+    }
+}
