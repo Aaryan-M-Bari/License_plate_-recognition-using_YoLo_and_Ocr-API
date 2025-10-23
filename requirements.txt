@@ -7,3 +7,4 @@ torchvision
 easyocr
 opencv-python-headless
 numpy
+gunicorn
