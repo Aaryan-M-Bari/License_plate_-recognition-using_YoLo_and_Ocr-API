@@ -6,6 +6,8 @@ from ultralytics import YOLO
 import easyocr
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import numpy as np
+import uvicorn
+from pyngrok import ngrok
 
 # --- CONFIGURATION & MODEL LOADING (Happens once on startup) ---
 YOLO_MODEL_PATH = './license_plate_detector.pt'
@@ -19,8 +21,8 @@ try:
     yolo_model = YOLO(YOLO_MODEL_PATH)
     print("✅ YOLO model loaded successfully.")
     
-    # Load EasyOCR reader - IMPORTANT: set gpu=True for cloud deployment
-    reader = easyocr.Reader(['en'], gpu=True) # Use GPU in the cloud
+    # Load EasyOCR reader - Set gpu=False for local CPU hosting
+    reader = easyocr.Reader(['en'], gpu=False) 
     print("✅ EasyOCR reader loaded successfully.")
 
 except Exception as e:
@@ -34,10 +36,13 @@ def load_vehicle_data():
     if os.path.exists(DATABASE_FILE):
         with open(DATABASE_FILE, 'r') as f:
             return json.load(f)
-    print("WARNING: database_file.json not found. Starting with an empty database.")
+    print(f"WARNING: '{DATABASE_FILE}' not found. Starting with an empty database.")
     return {}
 
 VEHICLE_DATA = load_vehicle_data()
+if VEHICLE_DATA:
+    print(f"Loaded {len(VEHICLE_DATA)} entries from '{DATABASE_FILE}'.")
+
 
 # --- HELPER FUNCTIONS ---
 def clean_text(raw_text):
@@ -107,7 +112,16 @@ async def verify_plate(file: UploadFile = File(...)):
             "plate_number": plate_text
         }
 
-# To run this API locally:
-# 1. Open your terminal.
-# 2. Run the command: uvicorn api:app --reload
-# 3. Open your browser to http://127.0.0.1:8000/docs
+# --- MAIN EXECUTION FOR LOCAL HOSTING ---
+if __name__ == "__main__":
+    try:
+        # Open a tunnel to the uvicorn server, which will be running on port 8000
+        public_url = ngrok.connect(8000)
+        print("✅ Your API is live at:", public_url)
+
+        # Start the uvicorn server to handle requests
+        uvicorn.run("api:app", host="0.0.0.0", port=8000)
+
+    except Exception as e:
+        print(f"❌ An error occurred: {e}")
+        print("Please ensure your ngrok authtoken is configured correctly by running the `configure_ngrok.py` script.")
